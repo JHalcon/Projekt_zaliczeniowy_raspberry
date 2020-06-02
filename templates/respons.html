@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>  
+
+    </style>
+ <script>
+ </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from 
+<a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>-->
+</head>
+<link rel="stylesheet" type="text/css" href="static/main2.css">
+<body>
+    <div id="second"> 
+        
+        <div id="left" >
+         <div id="Kolo">
+             <div id="K">
+              <!-- <div id="camera1">Camera 1</div> -->
+			  <img id="camera1" src="{{ url_for('ruch') }}">
+			  
+            </div>
+              <div id="startmonitoring">
+                <span>Monitoring</span>
+                <!-- <button class="btn-pan-blue" onclick="pp">Start</button> -->
+				<form id="cam1"  action="" method="POST">
+                    <input type="submit" id="c1btn" name="monitoring" class="btn-pan-blue" value="Start">
+                </form>
+            </div>
+         </div>
+           
+        </div>
+        <div id="right">
+          <div id="camcontent">
+            <!-- <div id="camera2"> camera 2</div> -->
+			<img id="camera2" src="{{ url_for('podglad') }}">
+            </div>
+            <div id="circle-box">
+            <div class="circle">
+                    <div class="pir">
+                        <span>People in room: </span>
+                        <div id="ile"></div>
+                    </div>
+                <div class="pir">
+                <form id="cam2"  action="" method="POST">
+                    <input type="submit" id="c2btn" name="zmiana" class="btn-pan" value="Display mode 1">
+                </form>
+                </div>
+            </div>
+          </div>
+        </div>
+        </div>
+        <script>
+			var panel = new EventSource("/KameraTryb");
+			panel.onmessage = function(event) {
+				let panelID = event.data;
+				if(panelID=="Display mode 1"){
+					c2btn.style.backgroundColor = "darkgray";
+					c2btn.style.color = "white";
+					c2btn.value = "Display mode 2";
+				}else if(panelID=="Display mode 2"){
+					c2btn.style.backgroundColor = "white";
+					c2btn.style.color = "black";
+					c2btn.value = "Display mode 1";
+				}}
+            
+			var monitor = new EventSource("/MonitoringTryb");
+			monitor.onmessage = function(event) {
+				let panelID = event.data;
+				if(panelID=="Start"){
+					//c1btn.style.backgroundColor = "darkgray";
+					//c1btn.style.color = "white";
+					c1btn.value = "Stop";
+				}else if(panelID=="Stop"){
+					//c1btn.style.backgroundColor = "white";
+					//c1btn.style.color = "black";
+					c1btn.value = "Start";
+				}}
+				
+			var ile = new EventSource("/progressILE");
+			ile.onmessage = function(event) {
+				document.getElementById("ile").innerHTML = event.data;
+			}	
+       
+        </script>
+</body>
+</html>

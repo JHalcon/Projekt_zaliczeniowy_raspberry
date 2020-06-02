@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Witaj w dokumentacji projektu: System monitorujący liczbę osób w pomieszczeniu! &mdash; System monitorujący liczbę osób w pomieszczeniu 1 - dokumentacja</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'1',
+              LANGUAGE:'',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> System monitorujący liczbę osób w pomieszczeniu
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Witaj w dokumentacji projektu: System monitorujący liczbę osób w pomieszczeniu!</a></li>
+<li><a class="reference internal" href="#module-app">Główny moduł programu</a></li>
+<li><a class="reference internal" href="#module-SingleMotionDetector">SingleMotionDetector - rozpoznawanie ruchu</a></li>
+<li><a class="reference internal" href="#menu">Menu</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">System monitorujący liczbę osób w pomieszczeniu</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Witaj w dokumentacji projektu: System monitorujący liczbę osób w pomieszczeniu!</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="witaj-w-dokumentacji-projektu-system-monitorujacy-liczbe-osob-w-pomieszczeniu">
+<h1>Witaj w dokumentacji projektu: System monitorujący liczbę osób w pomieszczeniu!<a class="headerlink" href="#witaj-w-dokumentacji-projektu-system-monitorujacy-liczbe-osob-w-pomieszczeniu" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<p>Contents:</p>
+</div>
+<div class="section" id="module-app">
+<span id="glowny-modul-programu"></span><h1>Główny moduł programu<a class="headerlink" href="#module-app" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<p>Moduł dotyczy głównego pliku obsługującego system. Zawiera funkcje służące do wyświetlania klatek na ekranie,
+funkcje analizujące obraz oraz funkcję obsługującą komunikaty email.</p>
+<dl class="function">
+<dt id="app.KameraTryb">
+<code class="descclassname">app.</code><code class="descname">KameraTryb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#KameraTryb"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.KameraTryb" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja obsługuje przycisk zmiany trybu wyświetlania pierwszej kamery (pracuje wraz z funckją my_form_post).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.MonitoringTryb">
+<code class="descclassname">app.</code><code class="descname">MonitoringTryb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#MonitoringTryb"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.MonitoringTryb" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja obsługuje przycisk zmiany trybu wyświetlania drugiej kamery (pracuje wraz z funckją my_form_post).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.detect_face">
+<code class="descclassname">app.</code><code class="descname">detect_face</code><span class="sig-paren">(</span><em>frameCount</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#detect_face"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.detect_face" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja wykorzystuje globalną zmienną zawierającą oraz z kamery. 
+Analizuje ją w poszukiwaniu twarzy i przerobioną klatkę (z zaznaczonymi ramkami) zapisuje do innej zmiennej globalnej.
+Ilość rozpoznanych twarzy jest zapisywana do kolejnej zmiennej globalnej.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>frameCount</strong> &#8211; ilość klatek na sekunde</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.detect_motion">
+<code class="descclassname">app.</code><code class="descname">detect_motion</code><span class="sig-paren">(</span><em>frameCount</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#detect_motion"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.detect_motion" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja wykorzystuje globalną zmienną zawierającą oraz z drugiej kamery. 
+Tworzona jest instancja klasy SingleMotionDetector, za pomocą której system rozpoznaje ruch na nastepujących po sobie klatkach. 
+Klatka z zaznaczonym ruchem jest zapisywana do innej zmiennej globalnej.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>frameCount</strong> &#8211; ilość klatek na sekunde</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.generate">
+<code class="descclassname">app.</code><code class="descname">generate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#generate"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.generate" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja obsługuje wyświetlanie obrazu z pierwszej kamery.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.generate3">
+<code class="descclassname">app.</code><code class="descname">generate3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#generate3"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.generate3" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja obsługuje wyświetlanie obrazu z drugiej kamery.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.index">
+<code class="descclassname">app.</code><code class="descname">index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#index"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.index" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja wystawia plik html, który będzie dostępny pod adresem ip komputera.
+:return: plik &#8220;index.html&#8221;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.kamera">
+<code class="descclassname">app.</code><code class="descname">kamera</code><span class="sig-paren">(</span><em>frameCount</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#kamera"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.kamera" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja posiada wyłączny dostęp do pierwszej kamery. 
+Co klatkę zapisuje obraz z kamery do globalnej zmiennej.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>frameCount</strong> &#8211; ilość klatek na sekunde</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.kamera2">
+<code class="descclassname">app.</code><code class="descname">kamera2</code><span class="sig-paren">(</span><em>frameCount</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#kamera2"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.kamera2" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja posiada wyłączny dostęp do drugiej kamery. 
+Co klatkę zapisuje obraz z kamery do globalnej zmiennej.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>frameCount</strong> &#8211; ilość klatek na sekunde</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.my_form_post">
+<code class="descclassname">app.</code><code class="descname">my_form_post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#my_form_post"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.my_form_post" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja wystawia plik html, który będzie dostępny pod adresem ip komputera.
+Jest wywoływana w przypadku zastosowania metody POST. Służy też do obsługi przycisków na stronie (zmiany trybów wyświetlania kamer).
+:return: plik &#8220;respons.html&#8221;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.podglad">
+<code class="descclassname">app.</code><code class="descname">podglad</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#podglad"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.podglad" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja wysyła obraz z pierwszej kamery na serwer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.progressILE">
+<code class="descclassname">app.</code><code class="descname">progressILE</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#progressILE"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.progressILE" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja obsługuje wyświetlanie liczby rozpoznanych osób.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.ruch">
+<code class="descclassname">app.</code><code class="descname">ruch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#ruch"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.ruch" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja wysyła obraz z drugiej kamery na serwer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.wyslijMail">
+<code class="descclassname">app.</code><code class="descname">wyslijMail</code><span class="sig-paren">(</span><em>address='bartlomiej-pietras&#64;wp.pl'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#wyslijMail"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#app.wyslijMail" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja wysyła komunikat email na podany adres w sytuacji, gdy na monitoringu zostanie wykryty ruch.
+W wysłanej wiadomości znajdują się zdjęcia z obu kamer wraz z informacją o wykrytym ruchu.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>address</strong> &#8211; adres, na który wysyłany jest komunikat email</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Zwraca:</th><td class="field-body">int - zwracany kod (1 - sukces, 0 - błąd)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-SingleMotionDetector">
+<span id="singlemotiondetector-rozpoznawanie-ruchu"></span><h1>SingleMotionDetector - rozpoznawanie ruchu<a class="headerlink" href="#module-SingleMotionDetector" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<dl class="class">
+<dt id="SingleMotionDetector.SingleMotionDetector">
+<em class="property">class </em><code class="descclassname">SingleMotionDetector.</code><code class="descname">SingleMotionDetector</code><span class="sig-paren">(</span><em>accumWeight=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SingleMotionDetector.html#SingleMotionDetector"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#SingleMotionDetector.SingleMotionDetector" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Klasa obsługuje rozpoznawanie ruchu. Jest wykorzystywana do analizy obrazu z drugiej kamery.</p>
+<dl class="method">
+<dt id="SingleMotionDetector.SingleMotionDetector.detect">
+<code class="descname">detect</code><span class="sig-paren">(</span><em>image</em>, <em>tVal=25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SingleMotionDetector.html#SingleMotionDetector.detect"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#SingleMotionDetector.SingleMotionDetector.detect" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja analizuje ostatnie klatki w celu rozpoznania ruchu.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>image</strong> &#8211; aktualna klatka</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Zwraca:</th><td class="field-body">(thresh, (minX, minY, maxX, maxY)) - współrzędne punktów ograniczających prostokąt, w którym rozpoznano ruch</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="SingleMotionDetector.SingleMotionDetector.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SingleMotionDetector.html#SingleMotionDetector.update"><span class="viewcode-link">[źródło]</span></a><a class="headerlink" href="#SingleMotionDetector.SingleMotionDetector.update" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja, docelowo wykonywana co klatkę, aktualizuje obiekt i umożliwia rozpoznawanie ruchu z wykorzystaniem nowej klatki.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parametry:</th><td class="field-body"><strong>image</strong> &#8211; aktualna klatka</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="menu">
+<h1>Menu<a class="headerlink" href="#menu" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Indeks</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Indeks modułów</em></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bartłomiej Pietras Jeremiasz Soboń
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

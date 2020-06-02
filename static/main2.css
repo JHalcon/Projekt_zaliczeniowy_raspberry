@@ -1,0 +1,224 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#second {
+    width: 100%;
+    height: 100vh;
+    background-color: lightslategray;
+    /*position: absolute;*/
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    /* z-index: -1 !important;*/
+}
+
+#right {
+    display: flex;
+
+    flex-direction: column;
+    width: 50%;
+    flex-wrap: wrap;
+    align-content: center;
+
+}
+
+#left {
+    position: relative;
+    width: 50%;
+    z-index: 1;
+}
+
+#startmonitoring {
+    height: 15vh;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    align-self: flex-end;
+    font-size:25px;
+}
+
+#camera2 {
+    background-color: rgb(61, 32, 32);
+    width: 60%;
+    height: 70%;
+
+}
+
+#camera1 {
+    background-color: rgb(61, 32, 32);
+    width: 100%;
+    height: 100%;
+    z-index: -1 !important;
+
+}
+
+#Kolo {
+    background-image: url('camera.svg');
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*width: 700px;
+    height: 700px;*/
+    width:100vh;
+    height:100%;
+    z-index: 3 !important;
+}
+
+.pir {
+    display: flex;
+    height: 100px;
+    align-content: center;
+    justify-content: center;
+    align-self: flex-end;
+}
+
+#K {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 58vh;
+    height: 42vh;
+    
+    
+}
+.circle{
+    background-image: url("kolo2.svg");
+    background-repeat: no-repeat;
+    width:40vw;
+    height:100vh;
+    flex-direction: column;
+    align-self: flex-end;
+    display:flex;
+    padding-right: 6vh;
+    padding-top: 12vh;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+#circle-box{
+width:100%;
+height: 37%;
+flex-direction:column;
+align-items: flex-end;
+display:flex;
+
+}
+#camcontent{
+display:flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 100%;
+    height: 63%;
+
+}
+#ile{
+    width:100px;
+    background-color: white;
+    height:50px;
+    margin-left: 5px;
+}
+.btn-pan{
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color:white;
+    font-weight: bold;
+}
+.btn-pan-blue{
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: cornflowerblue;
+    font-weight: bold;
+    margin-top:20px;
+    border:0;
+}
+@media (max-width: 767px){
+  
+    #second {
+        flex-direction: column-reverse;
+    }
+
+    #left,
+    #right {
+        height: 50%;
+        width: 100%;
+    }
+    #right{
+        background-color: cornflowerblue;
+    }
+
+    #Kolo {
+        width: 400px;
+        height: 400px;
+    }
+
+    #K {
+        width: 300px;
+        height: 200px;
+    }
+    .circle{
+        flex-direction: column;
+        display:flex;
+        font-size: 25px;
+        height:100px;
+        width:100%;
+        background-image: none;
+        align-content: center;
+    }
+    .btn-pan{
+        margin-top: 10px;
+    }
+    #circle-box{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width:90%;
+    height:100px;
+    
+    }
+    #camcontent{
+        height:30vh;
+        margin-top: 10px;;
+    }
+    #camera2{
+        height:100%;
+    }
+    .pir{
+        width:300px;
+        font-size: 20px;
+        
+        }
+ 
+    #ile{
+        width:100px;
+        background-color: white;
+        height:30px;
+        margin-left: 5px;
+    }
+    #startmonitoring{
+    position:absolute;
+    bottom:0;
+    top:32vh;
+    }
+
+}

@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>app &mdash; System monitorujący liczbę osób w pomieszczeniu 1 - dokumentacja</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'1',
+              LANGUAGE:'',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> System monitorujący liczbę osób w pomieszczeniu
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">System monitorujący liczbę osób w pomieszczeniu</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Kod modułu</a> &raquo;</li>
+        
+      <li>app</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Kod źródłowy modułu app</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Moduł dotyczy głównego pliku obsługującego system. Zawiera funkcje służące do wyświetlania klatek na ekranie,</span>
+<span class="sd">funkcje analizujące obraz oraz funkcję obsługującą komunikaty email.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">imutils.video</span> <span class="kn">import</span> <span class="n">VideoStream</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">imutils</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">imutils.object_detection</span> <span class="kn">import</span> <span class="n">non_max_suppression</span>
+<span class="kn">import</span> <span class="nn">smtplib</span><span class="o">,</span> <span class="nn">ssl</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.base</span> <span class="kn">import</span> <span class="n">MIMEBase</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>  
+<span class="kn">from</span> <span class="nn">SingleMotionDetector</span> <span class="kn">import</span> <span class="n">SingleMotionDetector</span>
+
+    
+<span class="c1"># initialize the HOG descriptor/person detector</span>
+<span class="n">hog</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HOGDescriptor</span><span class="p">()</span>
+<span class="n">hog</span><span class="o">.</span><span class="n">setSVMDetector</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">HOGDescriptor_getDefaultPeopleDetector</span><span class="p">())</span>
+<span class="n">pedestrian_cascade</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CascadeClassifier</span><span class="p">(</span><span class="s2">&quot;/home/pi/monitoring/haarcascade_frontalface_default.xml&quot;</span><span class="p">)</span>
+
+<span class="n">kamera1_1</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">kamera1_2</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">kamera2_1</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">kamera2_2</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">zmianaKamery</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">zmianaKamery2</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">wersjaKamery</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">wersjaKamery2</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">czas</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%A </span><span class="si">%d</span><span class="s2"> %B %Y %I:%M:%S%p&quot;</span><span class="p">)</span>
+<span class="n">ile</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">lock1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+<span class="n">lock2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+<span class="n">lock1Kamera2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+<span class="n">lock2Kamera2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">vs</span> <span class="o">=</span> <span class="n">VideoStream</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">vs2</span> <span class="o">=</span> <span class="n">VideoStream</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+
+<span class="c1">#Funkcja do wysylania maili</span>
+<div class="viewcode-block" id="wyslijMail"><a class="viewcode-back" href="../index.html#app.wyslijMail">[dokumenty]</a><span class="k">def</span> <span class="nf">wyslijMail</span><span class="p">(</span><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;bartlomiej-pietras@wp.pl&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wysyła komunikat email na podany adres w sytuacji, gdy na monitoringu zostanie wykryty ruch.</span>
+<span class="sd">    W wysłanej wiadomości znajdują się zdjęcia z obu kamer wraz z informacją o wykrytym ruchu.</span>
+<span class="sd"> </span>
+<span class="sd"> </span>
+<span class="sd">    :param address: adres, na który wysyłany jest komunikat email</span>
+<span class="sd">    :return: int - zwracany kod (1 - sukces, 0 - błąd)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">kamera1_2</span><span class="p">,</span> <span class="n">kamera2_2</span>
+    
+    <span class="n">port</span> <span class="o">=</span> <span class="mi">465</span>
+    <span class="n">sender</span> <span class="o">=</span> <span class="s1">&#39;monitoringraspberry@o2.pl&#39;</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="s1">&#39;bartekjeremiasz&#39;</span>
+    <span class="n">recieve</span> <span class="o">=</span> <span class="n">address</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">    Właśnie wykryto ruch! Wejdź do panelu administratora i sprawdź to jak najszybiej.</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">create_default_context</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting to send&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="s2">&quot;poczta.o2.pl&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+        
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sender</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">recieve</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;Wykryto ruch!&quot;</span>
+            
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">))</span>
+        
+        
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s2">&quot;image1.jpg&quot;</span><span class="p">,</span> <span class="n">kamera1_2</span><span class="p">)</span> 
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s2">&quot;image2.jpg&quot;</span><span class="p">,</span> <span class="n">kamera2_2</span><span class="p">)</span> 
+
+        <span class="n">part</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s2">&quot;octet-stream&quot;</span><span class="p">)</span>  
+        <span class="n">part</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;image1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  
+        <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>  
+        <span class="n">part</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment; filename=&quot;image1.jpg&quot;&#39;</span><span class="p">)</span> 
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>  
+        
+        <span class="n">part</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s2">&quot;octet-stream&quot;</span><span class="p">)</span>  
+        <span class="n">part</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;image2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  
+        <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>  
+        <span class="n">part</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment; filename=&quot;image2.jpg&quot;&#39;</span><span class="p">)</span> 
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>  
+            
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sent email!&quot;</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">msg</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">except</span><span class="p">:</span>   
+            <span class="k">del</span> <span class="n">msg</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;email not sent!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        
+    
+</div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../index.html#app.index">[dokumenty]</a><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wystawia plik html, który będzie dostępny pod adresem ip komputera.</span>
+<span class="sd">    :return: plik &quot;index.html&quot; </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
+    </div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="my_form_post"><a class="viewcode-back" href="../index.html#app.my_form_post">[dokumenty]</a><span class="k">def</span> <span class="nf">my_form_post</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wystawia plik html, który będzie dostępny pod adresem ip komputera.</span>
+<span class="sd">    Jest wywoływana w przypadku zastosowania metody POST. Służy też do obsługi przycisków na stronie (zmiany trybów wyświetlania kamer).</span>
+<span class="sd">    :return: plik &quot;respons.html&quot; </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">zmianaKamery</span><span class="p">,</span> <span class="n">zmianaKamery2</span><span class="p">,</span> <span class="n">wersjaKamery</span><span class="p">,</span> <span class="n">wersjaKamery2</span>
+    
+    <span class="k">if</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zmiana&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">zmianaKamery</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zmiana&#39;</span><span class="p">)</span>
+        <span class="n">wersjaKamery</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        
+    <span class="k">if</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;monitoring&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">zmianaKamery2</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;monitoring&#39;</span><span class="p">)</span>
+        <span class="n">wersjaKamery2</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+
+        
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;respons.html&quot;</span><span class="p">)</span>
+
+</div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/progressILE&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="progressILE"><a class="viewcode-back" href="../index.html#app.progressILE">[dokumenty]</a><span class="k">def</span> <span class="nf">progressILE</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja obsługuje wyświetlanie liczby rozpoznanych osób.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
+        <span class="k">global</span> <span class="n">ile</span>
+        
+        <span class="k">yield</span> <span class="s2">&quot;data:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ile</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">generate</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span> <span class="s1">&#39;text/event-stream&#39;</span><span class="p">)</span>
+    </div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/KameraTryb&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="KameraTryb"><a class="viewcode-back" href="../index.html#app.KameraTryb">[dokumenty]</a><span class="k">def</span> <span class="nf">KameraTryb</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja obsługuje przycisk zmiany trybu wyświetlania pierwszej kamery (pracuje wraz z funckją my_form_post).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
+        <span class="k">global</span> <span class="n">zmianaKamery</span>
+        
+        <span class="k">yield</span> <span class="s2">&quot;data:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">zmianaKamery</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">generate</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span> <span class="s1">&#39;text/event-stream&#39;</span><span class="p">)</span>
+</div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/MonitoringTryb&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="MonitoringTryb"><a class="viewcode-back" href="../index.html#app.MonitoringTryb">[dokumenty]</a><span class="k">def</span> <span class="nf">MonitoringTryb</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja obsługuje przycisk zmiany trybu wyświetlania drugiej kamery (pracuje wraz z funckją my_form_post).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
+        <span class="k">global</span> <span class="n">zmianaKamery2</span>
+        
+        <span class="k">yield</span> <span class="s2">&quot;data:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">zmianaKamery2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">generate</span><span class="p">(),</span> <span class="n">mimetype</span><span class="o">=</span> <span class="s1">&#39;text/event-stream&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="kamera"><a class="viewcode-back" href="../index.html#app.kamera">[dokumenty]</a><span class="k">def</span> <span class="nf">kamera</span><span class="p">(</span><span class="n">frameCount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja posiada wyłączny dostęp do pierwszej kamery. </span>
+<span class="sd">    Co klatkę zapisuje obraz z kamery do globalnej zmiennej.</span>
+<span class="sd"> </span>
+<span class="sd">    :param frameCount: ilość klatek na sekunde</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">vs</span><span class="p">,</span> <span class="n">kamera1_1</span><span class="p">,</span> <span class="n">lock1</span>
+    <span class="n">time_klatka</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                
+        <span class="k">if</span><span class="p">(((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">time_klatka</span><span class="p">)</span> <span class="o">*</span> <span class="n">frameCount</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">time_klatka</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                <span class="s2">&quot;%A </span><span class="si">%d</span><span class="s2"> %B %Y %I:%M:%S%p&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">10</span><span class="p">),</span>
+                        <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+                                    
+            <span class="k">with</span> <span class="n">lock1</span><span class="p">:</span>
+                <span class="n">kamera1_1</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            
+          
+            </div>
+<div class="viewcode-block" id="detect_face"><a class="viewcode-back" href="../index.html#app.detect_face">[dokumenty]</a><span class="k">def</span> <span class="nf">detect_face</span><span class="p">(</span><span class="n">frameCount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wykorzystuje globalną zmienną zawierającą oraz z kamery. </span>
+<span class="sd">    Analizuje ją w poszukiwaniu twarzy i przerobioną klatkę (z zaznaczonymi ramkami) zapisuje do innej zmiennej globalnej.</span>
+<span class="sd">    Ilość rozpoznanych twarzy jest zapisywana do kolejnej zmiennej globalnej.</span>
+<span class="sd"> </span>
+<span class="sd">    :param frameCount: ilość klatek na sekunde</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">global</span> <span class="n">vs</span><span class="p">,</span> <span class="n">kamera1_1</span><span class="p">,</span> <span class="n">kamera1_2</span><span class="p">,</span> <span class="n">lock1</span><span class="p">,</span> <span class="n">lock2</span><span class="p">,</span> <span class="n">ile</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">kamera1_1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lock1</span><span class="o">.</span><span class="n">locked</span><span class="p">()):</span>
+            <span class="k">continue</span>
+            
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">kamera1_1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">))</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+        <span class="c1"># postaci roznych rozmiarow</span>
+        <span class="n">pedestrians</span> <span class="o">=</span> <span class="n">pedestrian_cascade</span><span class="o">.</span><span class="n">detectMultiScale</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span>
+            <span class="n">scaleFactor</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+            <span class="n">minNeighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">minSize</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+            <span class="n">flags</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CASCADE_SCALE_IMAGE</span><span class="p">)</span>
+            
+        <span class="c1"># rysowanie ramek wokol rozpoznanych postaci</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pedestrians</span><span class="p">:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="n">x</span><span class="o">+</span><span class="n">w</span><span class="p">,</span><span class="n">y</span><span class="o">+</span><span class="n">h</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">font</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_DUPLEX</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s1">&#39;Czlowiek&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">6</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">6</span><span class="p">),</span> <span class="n">font</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> 
+            <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        
+                         
+        
+        <span class="n">ile</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pedestrians</span><span class="p">)</span>                            
+        
+        <span class="k">with</span> <span class="n">lock2</span><span class="p">:</span>
+            <span class="n">kamera1_2</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="kamera2"><a class="viewcode-back" href="../index.html#app.kamera2">[dokumenty]</a><span class="k">def</span> <span class="nf">kamera2</span><span class="p">(</span><span class="n">frameCount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja posiada wyłączny dostęp do drugiej kamery. </span>
+<span class="sd">    Co klatkę zapisuje obraz z kamery do globalnej zmiennej.</span>
+<span class="sd"> </span>
+<span class="sd">    :param frameCount: ilość klatek na sekunde</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">vs2</span><span class="p">,</span> <span class="n">kamera2_1</span><span class="p">,</span> <span class="n">lock1Kamera2</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+   
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">vs2</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+            <span class="s2">&quot;%A </span><span class="si">%d</span><span class="s2"> %B %Y %I:%M:%S%p&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">10</span><span class="p">),</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+
+        <span class="k">with</span> <span class="n">lock1Kamera2</span><span class="p">:</span>
+            <span class="n">kamera2_1</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+
+</div>
+<div class="viewcode-block" id="detect_motion"><a class="viewcode-back" href="../index.html#app.detect_motion">[dokumenty]</a><span class="k">def</span> <span class="nf">detect_motion</span><span class="p">(</span><span class="n">frameCount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wykorzystuje globalną zmienną zawierającą oraz z drugiej kamery. </span>
+<span class="sd">    Tworzona jest instancja klasy SingleMotionDetector, za pomocą której system rozpoznaje ruch na nastepujących po sobie klatkach. </span>
+<span class="sd">    Klatka z zaznaczonym ruchem jest zapisywana do innej zmiennej globalnej.</span>
+<span class="sd"> </span>
+<span class="sd">    :param frameCount: ilość klatek na sekunde</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">global</span> <span class="n">kamera2_1</span><span class="p">,</span> <span class="n">kamera2_2</span><span class="p">,</span> <span class="n">lock1Kamera2</span><span class="p">,</span> <span class="n">lock2Kamera2</span>
+
+    <span class="n">md</span> <span class="o">=</span> <span class="n">SingleMotionDetector</span><span class="p">(</span><span class="n">accumWeight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+   
+        <span class="k">if</span><span class="p">(</span><span class="n">kamera2_1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lock1Kamera2</span><span class="o">.</span><span class="n">locked</span><span class="p">()</span> <span class="ow">or</span> <span class="n">wersjaKamery2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">continue</span>
+   
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">kamera2_1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1">#frame = imutils.resize(frame, width=400)</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="n">frameCount</span><span class="p">:</span>
+
+            <span class="n">motion</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">motion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">thresh</span><span class="p">,</span> <span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">maxY</span><span class="p">))</span> <span class="o">=</span> <span class="n">motion</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">minY</span><span class="p">),</span> <span class="p">(</span><span class="n">maxX</span><span class="p">,</span> <span class="n">maxY</span><span class="p">),</span>
+                              <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                              
+                <span class="n">wyslijMail</span><span class="p">()</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+
+        <span class="n">md</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">with</span> <span class="n">lock2Kamera2</span><span class="p">:</span>
+            <span class="n">kamera2_2</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+</div>
+<div class="viewcode-block" id="generate"><a class="viewcode-back" href="../index.html#app.generate">[dokumenty]</a><span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja obsługuje wyświetlanie obrazu z pierwszej kamery.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">kamera1_1</span><span class="p">,</span> <span class="n">kamera1_2</span><span class="p">,</span> <span class="n">lock1</span><span class="p">,</span> <span class="n">lock2</span><span class="p">,</span> <span class="n">wersjaKamery</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            
+        <span class="k">if</span> <span class="n">wersjaKamery</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kamera1_1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lock1</span><span class="o">.</span><span class="n">locked</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">encodedImage</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imencode</span><span class="p">(</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="n">kamera1_1</span><span class="p">)</span>
+            
+        <span class="k">elif</span> <span class="n">wersjaKamery</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kamera1_2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lock2</span><span class="o">.</span><span class="n">locked</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">encodedImage</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imencode</span><span class="p">(</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="n">kamera1_2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">yield</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;--frame</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="sa">b</span><span class="s1">&#39;Content-Type: image/jpeg</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+               <span class="nb">bytearray</span><span class="p">(</span><span class="n">encodedImage</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="generate3"><a class="viewcode-back" href="../index.html#app.generate3">[dokumenty]</a><span class="k">def</span> <span class="nf">generate3</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja obsługuje wyświetlanie obrazu z drugiej kamery.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">kamera2_1</span><span class="p">,</span> <span class="n">kamera2_2</span><span class="p">,</span> <span class="n">lock1Kamera2</span><span class="p">,</span> <span class="n">lock2Kamera2</span><span class="p">,</span> <span class="n">wersjaKamery2</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    
+        <span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">if</span> <span class="n">wersjaKamery2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kamera2_1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lock1Kamera2</span><span class="o">.</span><span class="n">locked</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">encodedImage</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imencode</span><span class="p">(</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="n">kamera2_1</span><span class="p">)</span>
+            
+        <span class="k">elif</span> <span class="n">wersjaKamery2</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kamera2_2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lock2Kamera2</span><span class="o">.</span><span class="n">locked</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">encodedImage</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imencode</span><span class="p">(</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="n">kamera2_2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">yield</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;--frame</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="sa">b</span><span class="s1">&#39;Content-Type: image/jpeg</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+               <span class="nb">bytearray</span><span class="p">(</span><span class="n">encodedImage</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+               </div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/podglad&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="podglad"><a class="viewcode-back" href="../index.html#app.podglad">[dokumenty]</a><span class="k">def</span> <span class="nf">podglad</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wysyła obraz z pierwszej kamery na serwer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">generate</span><span class="p">(),</span>
+                    <span class="n">mimetype</span><span class="o">=</span><span class="s2">&quot;multipart/x-mixed-replace; boundary=frame&quot;</span><span class="p">)</span>
+
+                    </div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/ruch&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="ruch"><a class="viewcode-back" href="../index.html#app.ruch">[dokumenty]</a><span class="k">def</span> <span class="nf">ruch</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wysyła obraz z drugiej kamery na serwer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">generate3</span><span class="p">(),</span>
+                    <span class="n">mimetype</span><span class="o">=</span><span class="s2">&quot;multipart/x-mixed-replace; boundary=frame&quot;</span><span class="p">)</span>
+</div>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;--ip&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;ip address of the device&quot;</span><span class="p">)</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;ephemeral port number of the server (1024 to 65535)&quot;</span><span class="p">)</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--frame-count&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;# of frames used to construct the background model&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">())</span>
+
+   
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">kamera</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;frame_count&quot;</span><span class="p">],))</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">detect_face</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;frame_count&quot;</span><span class="p">],))</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    
+    <span class="n">t3</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">kamera2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;frame_count&quot;</span><span class="p">],))</span>
+    <span class="n">t3</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">t3</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    
+    <span class="n">t4</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">detect_motion</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;frame_count&quot;</span><span class="p">],))</span>
+    <span class="n">t4</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">t4</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    
+    
+
+    <span class="c1"># start the flask app</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;ip&quot;</span><span class="p">],</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">],</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">threaded</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_reloader</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">vs</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bartłomiej Pietras Jeremiasz Soboń
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
