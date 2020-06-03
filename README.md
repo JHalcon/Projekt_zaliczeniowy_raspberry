@@ -4,12 +4,7 @@ Oprogramowania zostało napisane w języku Python w oparciu o  bibliotekę OpenC
 
 Dokumentacja techniczna: http://ux.up.krakow.pl/~bpietras/projinz/
 
-Wymagane biblioteki: 
-• Flask 
-• cv2  
-• numpy 
-• imutils
-• smtplib
+Wymagane biblioteki: Flask, cv2, numpy, imutils, smtplib
 
 Autorzy projektu:
 Bartłomiej Pietras
