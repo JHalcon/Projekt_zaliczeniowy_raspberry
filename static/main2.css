@@ -152,6 +152,18 @@ width: 100%;
     margin-top:20px;
     border:0;
 }
+.leftbtn{
+    position:absolute;
+    bottom:5%;
+    right:35%;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: cornflowerblue;
+    font-weight: bold;
+    margin-top:20px;
+    border:none;
+}
 @media (max-width: 767px){
   
     #second {
@@ -219,6 +231,14 @@ width: 100%;
     position:absolute;
     bottom:0;
     top:32vh;
+    }
+        .leftbtn{
+        position:absolute;
+        bottom:1%;
+        right:1%;
+        color:white;
+        
+        z-index: 5;
     }
 
 }
