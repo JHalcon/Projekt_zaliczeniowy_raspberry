@@ -140,6 +140,11 @@ def my_form_post():
         
     return render_template("respons.html")
 
+@app.route("/baza")
+def baza():
+    with open("templates/baza.txt", "r") as f:
+        content = f.read()
+    return render_template("baza.html", content=content)
 
 @app.route('/progressILE')
 def progressILE():
@@ -195,7 +200,7 @@ def kamera(frameCount):
             
             timestamp = datetime.datetime.now()
             cv2.putText(frame, timestamp.strftime(
-                "%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+                "%Y.%m.%d %H:%M:%S"), (10, frame.shape[0] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
                                     
             with lock1:
@@ -260,7 +265,7 @@ def kamera2(frameCount):
         
         timestamp = datetime.datetime.now()
         cv2.putText(frame, timestamp.strftime(
-            "%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+            "%Y.%m.%d %H:%M:%S"), (10, frame.shape[0] - 10),
             cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
 
@@ -309,6 +314,21 @@ def detect_motion(frameCount):
 
         with lock2Kamera2:
             kamera2_2 = frame.copy() 
+
+def zapisz_plik():
+    """
+    Funkcja co 10 minut zapisuje ilość osób do pliku "baza.txt".
+    """
+    global ile
+    
+    while(True):    
+        timestamp = datetime.datetime.now()
+
+        file = open('templates/baza.txt', 'a')
+        file.write("\n"+timestamp.strftime("%Y.%m.%d %H:%M")+" "+str(ile))
+        file.close()
+        time.sleep(600)
+    
 
 def generate():
     """
@@ -409,6 +429,10 @@ if __name__ == '__main__':
         args["frame_count"],))
     t4.daemon = True
     t4.start()
+    
+    t5 = threading.Thread(target=zapisz_plik)
+    t5.daemon = True
+    t5.start()
     
     
 
