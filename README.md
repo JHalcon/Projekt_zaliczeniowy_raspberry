@@ -6,7 +6,7 @@ Dokumentacja techniczna: http://ux.up.krakow.pl/~bpietras/projinz/
 
 Wymagane biblioteki: Flask, cv2, numpy, imutils, smtplib
 
-Wymagane zasoby sprzętowe: Rapsery Pi - przynajmniej w wersji Zero W (z kartą sieciową wifi), dedykowana kamerka PiHut ZeroCam FishEye, dowolna kamera USB, adapter microUSB - USB typu A, zasilacz  5V/2A.
+Wymagane zasoby sprzętowe: Raspberry Pi - przynajmniej w wersji Zero W (z kartą sieciową wifi), dedykowana kamerka PiHut ZeroCam FishEye, dowolna kamera USB, adapter microUSB - USB typu A, zasilacz  5V/2A.
 
 Autorzy projektu:
 Bartłomiej Pietras
